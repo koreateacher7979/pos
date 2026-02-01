@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { LectureInfo, GenerationResponse } from './types';
 import { generatePosts } from './geminiService';
 import { 
@@ -10,7 +10,10 @@ import {
   Instagram, 
   BookOpen, 
   Sparkles,
-  Info
+  Heart,
+  Palette,
+  Mic2,
+  AlertCircle
 } from 'lucide-react';
 
 export default function App() {
@@ -34,7 +37,7 @@ export default function App() {
 
   const handleGenerate = async () => {
     if (!formData.location || !formData.topic) {
-      alert("출강 장소와 강의 주제는 필수 입력 사항입니다.");
+      setError("출강 장소와 강의 주제는 필수 입력 사항입니다. 😊");
       return;
     }
 
@@ -44,7 +47,8 @@ export default function App() {
       const data = await generatePosts(formData);
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "알 수 없는 오류 발생");
+      console.error(err);
+      setError("글을 생성하는 중에 문제가 발생했어요. 잠시 후 다시 시도해주세요. (API Key 확인 필요)");
     } finally {
       setIsLoading(false);
     }
@@ -57,129 +61,150 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen pb-20">
-      {/* Header & Branding */}
-      <header className="bg-gradient-to-r from-indigo-700 via-blue-800 to-indigo-900 text-white py-12 px-4 shadow-lg text-center relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-          <div className="absolute top-[-50px] left-[-50px] w-64 h-64 bg-white rounded-full blur-3xl"></div>
-          <div className="absolute bottom-[-50px] right-[-50px] w-80 h-80 bg-blue-400 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-[#f9fbf9] pb-20">
+      {/* Header & Branding - More Friendly Colors */}
+      <header className="bg-gradient-to-br from-emerald-500 via-teal-600 to-cyan-700 text-white py-14 px-4 shadow-md text-center relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
+          <div className="absolute top-[-40px] left-1/4 w-96 h-96 bg-yellow-200 rounded-full blur-[100px]"></div>
+          <div className="absolute bottom-[-40px] right-1/4 w-96 h-96 bg-pink-200 rounded-full blur-[100px]"></div>
         </div>
         
         <div className="relative z-10 max-w-4xl mx-auto">
-          <div className="inline-block bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-semibold mb-6 border border-white/30 tracking-wider animate-pulse">
+          <div className="inline-flex items-center gap-2 bg-white/30 backdrop-blur-xl px-5 py-2 rounded-full text-sm font-bold mb-6 border border-white/40 shadow-sm animate-bounce">
+            <Palette size={16} />
             개발자: 가치있는 미래교육 연구소 대표 김병찬
           </div>
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">
-            감각적인 강의 포스팅 생성기
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-5 tracking-tight drop-shadow-sm flex items-center justify-center gap-3">
+            <Sparkles className="text-yellow-300" />
+            감성 가득 강의 포스팅 매니저
+            <Sparkles className="text-yellow-300" />
           </h1>
-          <p className="text-indigo-100 text-lg opacity-90 max-w-2xl mx-auto font-light leading-relaxed">
-            리더십, 에듀테크, 생성형 AI 전문가를 위한<br/>
-            노출 최적화 맞춤형 콘텐츠 제작 솔루션
+          <p className="text-emerald-50 text-lg opacity-95 max-w-2xl mx-auto font-medium leading-relaxed">
+            미술 교사의 감성과 AI의 스마트함이 만났습니다.<br/>
+            오늘의 소중한 강의 기록을 가장 빛나게 만들어드릴게요! ✨
           </p>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 -mt-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <main className="max-w-6xl mx-auto px-4 -mt-10 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Form Section */}
-          <div className="lg:col-span-5 bg-white rounded-2xl shadow-xl p-8 border border-slate-100">
-            <div className="flex items-center gap-2 mb-8 text-indigo-700 border-b pb-4">
-              <Sparkles size={24} />
-              <h2 className="text-xl font-bold">강의 정보 입력</h2>
+          <div className="lg:col-span-5 bg-white rounded-[2rem] shadow-2xl p-8 md:p-10 border border-emerald-50 relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
+               <Mic2 size={120} />
             </div>
             
-            <div className="space-y-6">
-              <InputGroup label="출강 장소" name="location" value={formData.location} onChange={handleInputChange} placeholder="예: 삼성전자 인재개발원" />
-              <InputGroup label="출강 일시" name="dateTime" value={formData.dateTime} onChange={handleInputChange} placeholder="예: 2024년 5월 20일 오후 2시" />
-              <InputGroup label="강의 대상" name="target" value={formData.target} onChange={handleInputChange} placeholder="예: 임직원 50명, 중학교 교사" />
-              <InputGroup label="강의 주제" name="topic" value={formData.topic} onChange={handleInputChange} placeholder="예: 생성형 AI를 활용한 생산성 혁신" />
+            <div className="flex items-center gap-3 mb-10 text-emerald-700 border-b border-emerald-100 pb-5">
+              <div className="p-3 bg-emerald-50 rounded-2xl">
+                <Heart size={24} className="fill-emerald-500 text-emerald-500" />
+              </div>
+              <h2 className="text-2xl font-bold">강의 이야기 들려주기</h2>
+            </div>
+            
+            <div className="space-y-7">
+              <InputGroup label="어디에서 강의하셨나요?" name="location" value={formData.location} onChange={handleInputChange} placeholder="예: 세종특별자치시 교육청" icon={<Palette size={16}/>} />
+              <InputGroup label="언제 다녀오셨나요?" name="dateTime" value={formData.dateTime} onChange={handleInputChange} placeholder="예: 2024년 6월 15일 화요일" icon={<Sparkles size={16}/>} />
+              <InputGroup label="누구를 만나셨나요?" name="target" value={formData.target} onChange={handleInputChange} placeholder="예: 혁신 성장을 꿈꾸는 초임 교사들" icon={<Heart size={16}/>} />
+              <InputGroup label="어떤 주제로 소통하셨나요?" name="topic" value={formData.topic} onChange={handleInputChange} placeholder="예: AI 시대를 여는 창의적 리더십" icon={<Mic2 size={16}/>} />
               
-              <div className="space-y-2">
-                <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-                  <Info size={14} className="text-indigo-500"/>
-                  현장 반응 및 특이사항
+              <div className="space-y-3">
+                <label className="text-[15px] font-bold text-slate-700 flex items-center gap-2 px-1">
+                  강의 현장의 특별한 분위기는 어땠나요?
                 </label>
                 <textarea
                   name="reaction"
                   value={formData.reaction}
                   onChange={handleInputChange}
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 text-slate-800 outline-none resize-none"
-                  placeholder="강의장 분위기, 특별했던 질문, 학습자 피드백 등을 입력하세요."
+                  rows={5}
+                  className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 transition-all bg-slate-50 text-slate-800 outline-none resize-none placeholder:text-slate-400"
+                  placeholder="교육생들의 눈빛, 뜨거웠던 질문, 감사한 피드백 등을 자유롭게 적어주세요."
                 />
               </div>
+
+              {error && (
+                <div className="bg-rose-50 border border-rose-100 text-rose-600 px-5 py-3 rounded-xl flex items-center gap-3 text-sm animate-shake">
+                  <AlertCircle size={18} />
+                  {error}
+                </div>
+              )}
 
               <button
                 onClick={handleGenerate}
                 disabled={isLoading}
-                className={`w-full py-4 rounded-xl font-bold text-white shadow-lg flex items-center justify-center gap-2 transition-all transform hover:scale-[1.02] active:scale-95 ${
-                  isLoading ? 'bg-slate-400' : 'bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700'
+                className={`w-full py-5 rounded-2xl font-extrabold text-white shadow-xl shadow-emerald-200/50 flex items-center justify-center gap-3 transition-all transform hover:-translate-y-1 active:scale-95 text-lg ${
+                  isLoading ? 'bg-slate-300' : 'bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700'
                 }`}
               >
                 {isLoading ? (
-                  <RefreshCw className="animate-spin" size={20} />
+                  <RefreshCw className="animate-spin" size={24} />
                 ) : (
-                  <Send size={20} />
+                  <Sparkles size={24} />
                 )}
-                {isLoading ? '생성 중...' : '포스팅 생성하기'}
+                {isLoading ? '작가님이 정성껏 작성 중...' : '마법같은 포스팅 생성'}
               </button>
             </div>
           </div>
 
           {/* Results Section */}
           <div className="lg:col-span-7 space-y-8">
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center gap-3">
-                <span className="font-bold">Error:</span> {error}
-              </div>
-            )}
-
             {!result && !isLoading && (
-              <div className="h-full flex flex-col items-center justify-center text-slate-400 py-20 border-2 border-dashed border-slate-200 rounded-2xl bg-white/50">
-                <Sparkles size={48} className="mb-4 opacity-20" />
-                <p className="text-center font-medium">강의 정보를 입력하고<br/>버튼을 클릭하여 포스팅을 생성해보세요.</p>
+              <div className="h-full min-h-[500px] flex flex-col items-center justify-center text-slate-400 py-20 border-3 border-dashed border-emerald-100 rounded-[2.5rem] bg-white/70 backdrop-blur-sm">
+                <div className="w-24 h-24 bg-emerald-50 rounded-full flex items-center justify-center mb-6">
+                   <Sparkles size={40} className="text-emerald-300 animate-pulse" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-600 mb-2">포스팅 준비 완료!</h3>
+                <p className="text-center font-medium leading-relaxed">
+                  강의 내용을 입력하시면<br/>
+                  멋진 인스타그램과 블로그 글이 나타납니다.
+                </p>
               </div>
             )}
 
             {isLoading && (
-              <div className="space-y-6 animate-pulse">
-                <div className="h-64 bg-slate-200 rounded-2xl"></div>
-                <div className="h-64 bg-slate-200 rounded-2xl"></div>
+              <div className="space-y-8 animate-pulse">
+                <div className="h-80 bg-white rounded-[2rem] shadow-md border border-slate-100"></div>
+                <div className="h-[500px] bg-white rounded-[2rem] shadow-md border border-slate-100"></div>
               </div>
             )}
 
             {result && !isLoading && (
-              <>
+              <div className="space-y-8">
                 {/* Instagram Result */}
                 <ResultCard 
-                  title="Instagram Post" 
-                  icon={<Instagram size={20} className="text-pink-600" />}
+                  title="인스타그램 (Insta)" 
+                  icon={<div className="p-2 bg-pink-50 rounded-xl"><Instagram size={24} className="text-pink-600" /></div>}
                   content={result.instagram}
                   onCopy={() => handleCopy(result.instagram, 'insta')}
                   onRegenerate={handleGenerate}
                   isCopied={copiedStatus === 'insta'}
-                  badge="해시태그 5개 엄선"
+                  badge="인기 해시태그 5개 포함"
+                  color="border-pink-100"
                 />
 
                 {/* Naver Blog Result */}
                 <ResultCard 
-                  title="Naver Blog Post" 
-                  icon={<BookOpen size={20} className="text-green-600" />}
+                  title="네이버 블로그 (Naver Blog)" 
+                  icon={<div className="p-2 bg-green-50 rounded-xl"><BookOpen size={24} className="text-green-600" /></div>}
                   content={result.naverBlog}
                   onCopy={() => handleCopy(result.naverBlog, 'naver')}
                   onRegenerate={handleGenerate}
                   isCopied={copiedStatus === 'naver'}
-                  badge="검색 최적화 로직"
+                  badge="긴 호흡 & 검색 최적화"
+                  color="border-green-100"
                 />
-              </>
+              </div>
             )}
           </div>
         </div>
       </main>
 
-      <footer className="mt-12 text-center text-slate-400 text-sm">
-        <p>&copy; 2024 가치있는 미래교육 연구소. All Rights Reserved.</p>
+      <footer className="mt-20 text-center py-10">
+        <div className="flex items-center justify-center gap-2 text-slate-400 mb-2 font-semibold">
+           <Heart size={16} className="text-emerald-500 fill-emerald-500" />
+           가치있는 미래교육 연구소
+        </div>
+        <p className="text-slate-300 text-xs">© 2024 Kim Byeong-chan. All Rights Reserved.</p>
       </footer>
     </div>
   );
@@ -192,13 +217,14 @@ interface InputGroupProps {
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
+  icon?: React.ReactNode;
 }
 
-function InputGroup({ label, name, value, onChange, placeholder }: InputGroupProps) {
+function InputGroup({ label, name, value, onChange, placeholder, icon }: InputGroupProps) {
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-bold text-slate-700 flex items-center gap-1.5">
-        <CheckCircle2 size={14} className="text-indigo-500" />
+    <div className="space-y-3">
+      <label className="text-[15px] font-bold text-slate-700 flex items-center gap-2 px-1">
+        {icon && <span className="text-emerald-500">{icon}</span>}
         {label}
       </label>
       <input
@@ -206,7 +232,7 @@ function InputGroup({ label, name, value, onChange, placeholder }: InputGroupPro
         name={name}
         value={value}
         onChange={onChange}
-        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-slate-50 text-slate-800 outline-none"
+        className="w-full px-5 py-4 rounded-2xl border border-slate-200 focus:ring-4 focus:ring-emerald-100 focus:border-emerald-400 transition-all bg-slate-50 text-slate-800 outline-none font-medium placeholder:text-slate-400"
         placeholder={placeholder}
       />
     </div>
@@ -221,42 +247,45 @@ interface ResultCardProps {
   onRegenerate: () => void;
   isCopied: boolean;
   badge?: string;
+  color?: string;
 }
 
-function ResultCard({ title, icon, content, onCopy, onRegenerate, isCopied, badge }: ResultCardProps) {
+function ResultCard({ title, icon, content, onCopy, onRegenerate, isCopied, badge, color }: ResultCardProps) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-100 flex flex-col group transition-all hover:shadow-xl">
-      <div className="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-        <div className="flex items-center gap-3">
+    <div className={`bg-white rounded-[2.5rem] shadow-xl overflow-hidden border ${color || 'border-slate-100'} flex flex-col transition-all hover:shadow-2xl`}>
+      <div className="px-8 py-6 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-4">
           {icon}
-          <h3 className="font-bold text-slate-800">{title}</h3>
-          {badge && (
-            <span className="bg-indigo-50 text-indigo-600 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider">
-              {badge}
-            </span>
-          )}
+          <div>
+            <h3 className="font-extrabold text-slate-800 text-lg">{title}</h3>
+            {badge && (
+              <span className="text-emerald-600 text-[11px] font-bold uppercase tracking-wider">
+                {badge}
+              </span>
+            )}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <button 
             onClick={onRegenerate}
-            className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+            className="p-3 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-2xl transition-all"
             title="다시 생성"
           >
-            <RefreshCw size={18} />
+            <RefreshCw size={20} />
           </button>
           <button 
             onClick={onCopy}
-            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg font-bold text-sm transition-all ${
-              isCopied ? 'bg-green-500 text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+            className={`flex items-center gap-2 px-6 py-2.5 rounded-2xl font-bold transition-all shadow-sm ${
+              isCopied ? 'bg-emerald-500 text-white shadow-emerald-200' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
             }`}
           >
-            {isCopied ? <CheckCircle2 size={16} /> : <Copy size={16} />}
-            {isCopied ? '복사됨' : '전체 복사'}
+            {isCopied ? <CheckCircle2 size={18} /> : <Copy size={18} />}
+            {isCopied ? '복사 완료!' : '전체 복사'}
           </button>
         </div>
       </div>
-      <div className="p-6 bg-white flex-1">
-        <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-[15px] max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200 pr-2">
+      <div className="p-8 md:p-10 bg-white flex-1">
+        <div className="whitespace-pre-wrap text-slate-700 leading-relaxed text-[16px] scrollbar-thin scrollbar-thumb-emerald-100 scrollbar-track-transparent pr-2 max-h-[600px] overflow-y-auto">
           {content}
         </div>
       </div>
